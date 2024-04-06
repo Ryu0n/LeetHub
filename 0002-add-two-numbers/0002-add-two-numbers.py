@@ -23,10 +23,10 @@ class ListNode(object):
     def reinitialize(cls, ln):
         cn = ListNode(val=ln.val)
         if ln.next is None:
-            return cn
-        nn = cls.reinitialize(ln.next)
+            return cn, 1
+        nn, c = cls.reinitialize(ln.next)
         cn.next = nn
-        return cn
+        return cn, c+1
 
     def propagate(self, ln):
         self.val += ln.val
@@ -42,7 +42,11 @@ class Solution(object):
         :type l2: ListNode
         :rtype: ListNode
         """
-        l1 = ListNode.reinitialize(l1)
-        l2 = ListNode.reinitialize(l2)
-        l1.propagate(l2)
-        return l1
+        l1, c1 = ListNode.reinitialize(l1)
+        l2, c2 = ListNode.reinitialize(l2)
+        if c1 > c2:
+            l1.propagate(l2)
+            return l1
+        else:
+            l2.propagate(l1)
+            return l2
