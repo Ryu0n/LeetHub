@@ -1,24 +1,48 @@
 # Definition for singly-linked list.
 class ListNode(object):
+    CRITERION = 9
     def __init__(self, val=0, next=None):
-        self.val = val
+        self._val = val
         self.next = next
+    
+    @property
+    def val(self):
+        return self._val
+    
+    @val.setter
+    def val(self, val):
+        d10, d1 = divmod(val, self.CRITERION+1)
+        self._val = d1
+        if d10 > 0:
+            if self.next is not None:
+                self.next.val += d10
+            else:
+                self.next = ListNode(d10)
+
+    @classmethod
+    def reinitialize(cls, ln):
+        cn = ListNode(val=ln.val)
+        if ln.next is None:
+            return cn
+        nn = cls.reinitialize(ln.next)
+        cn.next = nn
+        return cn
+
+    def propagate(self, ln):
+        self.val += ln.val
+        if self.next is not None:
+            nln = ln.next if ln.next is not None else ListNode()
+            self.next.propagate(nln)
+
 
 class Solution(object):
-    def addTwoNumbers(self, l1, l2, d10=0):
+    def addTwoNumbers(self, l1, l2):
         """
         :type l1: ListNode
         :type l2: ListNode
         :rtype: ListNode
         """
-        if l1 is None and l2 is None:
-            return None if d10 == 0 else ListNode(val=d10, next=None)
-        v1 = l1.val if l1 is not None else 0
-        v2 = l2.val if l2 is not None else 0
-        s = (v1 + v2) + d10
-        d10, d1 = s // 10, s % 10
-        n1 = l1.next if l1 is not None else None
-        n2 = l2.next if l2 is not None else None
-        ln = self.addTwoNumbers(n1, n2, d10)
-        return ListNode(val=d1, next=ln)
-        
+        l1 = ListNode.reinitialize(l1)
+        l2 = ListNode.reinitialize(l2)
+        l1.propagate(l2)
+        return l1
