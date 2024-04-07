@@ -4,7 +4,8 @@ class Solution(object):
         :type s: str
         :rtype: int
         """
-        mem, mlen = dict(), 0
+        mem = dict()
+        mlen = 1 if len(s) > 0 else 0
         for i in range(len(s)-1):
             mem.clear()
             mem[s[i]] = 1
